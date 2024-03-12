@@ -20,8 +20,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/search_videos", handler.SearchVideos).Methods("GET")
 	r.HandleFunc("/get_sorted_videos", handler.GetSortedVideosHandler).Methods("GET")
-
+	
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

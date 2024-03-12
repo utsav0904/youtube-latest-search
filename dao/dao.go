@@ -22,30 +22,10 @@ func InitPostgreSQL(dataSourceName string) error {
 	return nil
 }
 
-func InsertVideo(title, videoURL, uploadDate string) error {
-	// Check if the videos table exists
-	rows, err := db.Query("SELECT to_regclass('public.videos')")
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	var tableName sql.NullString
-	for rows.Next() {
-		if err := rows.Scan(&tableName); err != nil {
-			return err
-		}
-	}
-
-	// If tableName is null, the videos table does not exist; create it
-	if !tableName.Valid || tableName.String == "" {
-		if err := createVideosTable(); err != nil {
-			return err
-		}
-	}
+func InsertVideo(title, videoURL, uploadDate, query string) error {
 
 	// Insert the video data
-	_, err = db.Exec("INSERT INTO videos (title, video_url, upload_date) VALUES ($1, $2, $3)", title, videoURL, uploadDate)
+	_, err := db.Exec("INSERT INTO videos (title, video_url, upload_date, query) VALUES ($1, $2, $3, $4)", title, videoURL, uploadDate, query)
 	if err != nil {
 		return err
 	}
@@ -57,7 +37,8 @@ func createVideosTable() error {
 		id SERIAL PRIMARY KEY,
 		title TEXT,
 		video_url TEXT,
-		upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		query TEXT
 	)`)
 	if err != nil {
 		return err
@@ -66,8 +47,8 @@ func createVideosTable() error {
 	return nil
 }
 
-func GetSortedVideos(limit int) ([]map[string]string, error) {
-	rows, err := db.Query("SELECT title, video_url, upload_date FROM videos ORDER BY upload_date DESC LIMIT $1", limit)
+func GetSortedVideos(limit int, query string) ([]map[string]string, error) {
+	rows, err := db.Query("SELECT title, video_url, upload_date FROM videos WHERE query=$2 ORDER BY upload_date DESC LIMIT $1", limit, query)
 	if err != nil {
 		return nil, err
 	}

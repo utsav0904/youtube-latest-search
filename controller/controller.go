@@ -8,7 +8,7 @@ import (
 	"test-youtube/dao"
 )
 
-const APIKey = "AIzaSyD_a-Epucnj_PwOXo3lK6PZ1mDybPhquAo"
+const APIKey = "AIzaSyAXoJ6WJlpO_ZtjLwwfxRrWuR65PYfqwDw"
 
 func SearchController(query string) ([]map[string]string, error) {
 	service, err := youtube.New(&http.Client{
@@ -35,9 +35,10 @@ func SearchController(query string) ([]map[string]string, error) {
 			"upload_date":   item.Snippet.PublishedAt,
 			"thumbnail_url": item.Snippet.Thumbnails.Default.Url,
 			"video_url":     "https://www.youtube.com/watch?v=" + item.Id.VideoId,
+			"query":         query,
 		}
 
-		if err := dao.InsertVideo(video["title"], video["video_url"], video["upload_date"]); err != nil {
+		if err := dao.InsertVideo(video["title"], video["video_url"], video["upload_date"], video["query"]); err != nil {
 			log.Println("Error inserting video:", err)
 		}
 
@@ -47,8 +48,8 @@ func SearchController(query string) ([]map[string]string, error) {
 	return videos, nil
 }
 
-func GetSortedVideoController(limit int) ([]map[string]string, error) {
-	videos, err := dao.GetSortedVideos(limit)
+func GetSortedVideoController(limit int, query string) ([]map[string]string, error) {
+	videos, err := dao.GetSortedVideos(limit, query)
 	if err != nil {
 		log.Println("Error retrieving sorted videos:", err)
 		return nil, err
