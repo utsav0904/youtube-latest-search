@@ -13,4 +13,10 @@ RUN go build -o main .
 
 EXPOSE 8080
 
+# Install PostgreSQL client
+RUN apk add --no-cache postgresql-client
+
+
 CMD ["./main"]
+
+

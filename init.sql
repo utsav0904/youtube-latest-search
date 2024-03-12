@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS videos (
                                       id SERIAL PRIMARY KEY,
                                       title TEXT,
                                       video_url TEXT,
-                                      upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                      upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                      query TEXT
 );
 
 -- Grant all privileges on the table
