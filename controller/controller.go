@@ -49,8 +49,10 @@ func SearchController(query string) ([]map[string]string, error) {
 	return videos, nil
 }
 
-func GetSortedVideoController(limit int, query string) ([]map[string]string, error) {
-	videos, err := dao.GetSortedVideos(limit, query)
+func GetSortedVideoController(limit, page int, query string) ([]map[string]string, error) {
+	offset := (page - 1) * limit
+
+	videos, err := dao.GetSortedVideos(limit, offset, query)
 	if err != nil {
 		log.Println("Error retrieving sorted videos:", err)
 		return nil, err
