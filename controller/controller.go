@@ -5,14 +5,14 @@ import (
 	"google.golang.org/api/youtube/v3"
 	"log"
 	"net/http"
+	"os"
 	"test-youtube/dao"
 )
 
-const APIKey = "AIzaSyAXoJ6WJlpO_ZtjLwwfxRrWuR65PYfqwDw"
-
 func SearchController(query string) ([]map[string]string, error) {
+	log.Println("Fetch Videos API Running in background every 20 Seconds")
 	service, err := youtube.New(&http.Client{
-		Transport: &transport.APIKey{Key: APIKey},
+		Transport: &transport.APIKey{Key: os.Getenv("API_KEY")},
 	})
 	if err != nil {
 		return nil, err
@@ -44,6 +44,7 @@ func SearchController(query string) ([]map[string]string, error) {
 
 		videos = append(videos, video)
 	}
+	log.Println("New Videos added to videos table")
 
 	return videos, nil
 }

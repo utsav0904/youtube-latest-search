@@ -10,7 +10,6 @@ import (
 
 const (
 	PostgreSQLDataSource = "host=db port=5432 user=users password=password dbname=youtube_db sslmode=disable"
-	ServerPort           = ":8080"
 )
 
 func main() {
@@ -21,6 +20,6 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/get_sorted_videos", handler.GetSortedVideosHandler).Methods("GET")
-	
+
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

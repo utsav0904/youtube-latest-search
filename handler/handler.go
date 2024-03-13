@@ -52,14 +52,14 @@ func GetSortedVideosHandler(w http.ResponseWriter, r *http.Request) {
 
 // Start background task to continuously fetch and store videos
 func startBackgroundTask(query string) {
-	ticker := time.NewTicker(5 * time.Minute)
+	ticker := time.NewTicker(20 * time.Second)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
 			// Call controller function to fetch latest videos and store data
-			if err, _ := controller.SearchController(query); err != nil {
+			if _, err := controller.SearchController(query); err != nil {
 				log.Println("Failed to fetch and store videos:", err)
 			}
 		case <-stopBackgroundTask:
