@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"test-youtube/controller"
 	"time"
 )
@@ -13,6 +14,16 @@ var stopBackgroundTask = make(chan struct{})
 var isBackgroundTaskRunning bool
 
 func GetSortedVideosHandler(w http.ResponseWriter, r *http.Request) {
+	// Parse query parameters for pagination
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || page <= 0 {
+		http.Error(w, "Invalid page number", http.StatusBadRequest)
+		return
+	}
+
+	limit := 10 // Change the limit as per your requirement
+	offset := (page - 1) * limit
+
 	query := r.URL.Query().Get("q")
 	if query == "" {
 		http.Error(w, "Search query parameter 'q' is required", http.StatusBadRequest)
@@ -28,14 +39,10 @@ func GetSortedVideosHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Background task started or is already running to fetch and store videos."))
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Background task started to fetch and store videos."))
-
-	limit := 10 // Change the limit as per your requirement
-
-	videos, err := controller.GetSortedVideoController(limit, query)
+	// Fetch paginated videos
+	videos, err := controller.GetSortedVideoController(limit, offset, query)
 	if err != nil {
-		http.Error(w, "Failed to retrieve sorted videos", http.StatusInternalServerError)
+		http.Error(w, "Failed to retrieve paginated sorted videos", http.StatusInternalServerError)
 		return
 	}
 

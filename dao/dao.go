@@ -47,8 +47,8 @@ func createVideosTable() error {
 	return nil
 }
 
-func GetSortedVideos(limit int, query string) ([]map[string]string, error) {
-	rows, err := db.Query("SELECT title, video_url, upload_date FROM videos WHERE query=$2 ORDER BY upload_date DESC LIMIT $1", limit, query)
+func GetSortedVideos(limit, offset int, query string) ([]map[string]string, error) {
+	rows, err := db.Query("SELECT title, video_url, upload_date FROM videos WHERE query=$3 ORDER BY upload_date DESC LIMIT $1 OFFSET $2", limit, offset, query)
 	if err != nil {
 		return nil, err
 	}
